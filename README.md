@@ -1,4 +1,4 @@
-# launchschool-RB101-programming-foundations
+# Launch School: RB101 - Programming Foundations
 Problem sets from the Launch School course "RB101: Programming Foundations." 
 
 ### Instructions 
