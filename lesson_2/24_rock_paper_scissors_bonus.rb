@@ -1,16 +1,36 @@
-# RULES
-# - ROCK beats SCISSORS, LIZARD
-# - PAPER beats ROCK, SPOCK
-# - SCISSORS beat PAPER, LIZARD
-# - SPOCK beats SCISSORS, ROCK
-# - LIZARD beats SPOCK, PAPER
+VALID_CHOICES = {
+  'r' => 'rock',
+  'p' => 'paper',
+  'sc' => 'scissors',
+  'sp' => 'spock',
+  'l' => 'lizard'
+}
 
-
-VALID_CHOICES = %w(rock paper scissors spock lizard)
-# VALID_CHOICES_FIRST_CHAR = VALID_CHOICES.map { |str| str[0] }
+WINNING_CONDITIONS = {
+  'rock' => ['scissors', 'lizard'],
+  'paper' => ['rock', 'spock'],
+  'scissors' => ['paper', 'lizard'],
+  'spock' => ['scissors', 'rock'],
+  'lizard' => ['spock', 'paper']
+}
 
 def prompt(message)
    puts "=> #{message}"
+end
+
+def display_instructions
+  puts ""
+  prompt("Welcome to #{VALID_CHOICES.values.join(', ')}!")
+  prompt("Here's how it works:")
+  puts ""
+
+  WINNING_CONDITIONS.each { |k, v| prompt("👉 #{k.capitalize} beats #{v[0]} and #{v[1]}") }
+
+  puts ""
+  prompt("Each time you win, you get 1 point.")
+  prompt("First player to 5 points becomes the Grand Winner!")
+  prompt("Now, let's get started...")
+  puts ""
 end
 
 def win?(first, second)
@@ -31,54 +51,33 @@ def display_results(player, computer)
   end
 end
 
-# find the first letter of each item in the array
-# print the first letter with ) in front of each option
-# print the firs tletter of the first option at the start of the prompt
-# make it so that if they just type that letter, it equates to typing out the entire word
-
-# Iterate through each item in VALID_CHOICES
-# print the first letter of each item
-# print the full string for each item
+display_instructions()
 
 loop do
   user_choice = ''
   loop do
-    prompt("Choose one: #{VALID_CHOICES.join(', ')}")
+    prompt("Choose one:")
+    puts ""
+    VALID_CHOICES.each { |k, v| prompt("👉 #{v.capitalize} (or #{k})") }
     user_choice = gets.chomp
 
-    case
-    when VALID_CHOICES.include?(user_choice)
+    if VALID_CHOICES.keys.include?(user_choice)
+      break
+    elsif VALID_CHOICES.values.include?(user_choice)
       break
     else
-      prompt("That's not a valid choice.")
+      puts ""
+      prompt("🚫 That's not a valid choice. Please try again")
     end
-
-    # case testing
-    # when user_choice == 'r'
-    #   user_choice = 'rock'
-    # when user_choice == 'p'
-    #   user_choice = 'paper'
-    # when user_choice == 's'
-    #   user_choice = 'scissors'
-    # when user_choice == 'sp'
-    #   user_choice = 'spock'
-    # when user_choice == 'l'
-    #   user_choice = 'lizard'
-    # else
-    #   "Error: That's not a valid choice"
-    # end
-
-    # if VALID_CHOICES.include?(user_choice)
-    #   break
-    # else
-    #   prompt("That's not a valid choice.")
-    # end
   end
 
+  computer_choice = VALID_CHOICES.values.sample
 
-  # IDEA: Right now we use the full string (e.g. rock) to determine winners and losers. That means if a user inputs the first letter of that word, we need a way of setting that answer equal to the string (e.g. rock). What if when a user inputs a letter, we use a method to set the letter equal to the full string e.g. rock, paper, scissors.
+  # - Compare computer and players choice
+  # - Determine the winner
+  # - Tally the score
+  # - Display the winner and the new score
 
-  computer_choice = VALID_CHOICES.sample
   prompt("You chose #{user_choice}, the computer chose #{computer_choice}")
 
   display_results(user_choice, computer_choice)
