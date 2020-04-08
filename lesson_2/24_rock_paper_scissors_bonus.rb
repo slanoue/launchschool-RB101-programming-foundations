@@ -37,18 +37,25 @@ end
 #   end
 # end
 
-puts ""
-prompt("Welcome to #{VALID_CHOICES.values.join(', ')}!")
-prompt("Here's how it works:")
-puts ""
+def instructions
+  puts ""
+  prompt("Welcome to #{VALID_CHOICES.values.join(', ')}!")
+  prompt("Here's how it works:")
+  puts ""
 
-# puts "Rock bets X beats Y beat blah blah blah"
-WIN_CONDITIONS.each { |k, v| prompt("👉 #{k.capitalize} beats #{v[0]} and #{v[1]}") }
+  WIN_CONDITIONS.each { |k, v| prompt("👉 #{k.capitalize} beats #{v[0]} and #{v[1]}") }
 
-puts ""
-prompt("Each time you win, you get 1 point.")
-prompt("First player to 5 points becomes the Grand Winner!")
-prompt("Now, let's get started...")
+  puts ""
+  prompt("Each time you win, you get 1 point.")
+  prompt("First player to 5 points becomes the Grand Winner!")
+  prompt("Now, let's get started...")
+end
+
+
+
+ # ----------- main -----------
+
+instructions
 
 loop do
   score = {
@@ -60,10 +67,12 @@ loop do
     player_choice = ''
 
     loop do
-      # prompt("Choose one: #{VALID_CHOICES.values.join(', ')}")
+      # method asking player to make a choice
       puts ""
       prompt("Choose one:")
       puts ""
+
+      # method to get + validate player choice
       VALID_CHOICES.each { |k, v| prompt("👉 #{v.capitalize} (or #{k})") }
 
       player_choice = gets.chomp.downcase
@@ -83,6 +92,7 @@ loop do
 
     prompt("You chose #{player_choice}, the computer chose #{computer_choice}")
 
+    # method
     if win?(player_choice, computer_choice)
       prompt("You win!")
     elsif win?(computer_choice, player_choice)
@@ -91,12 +101,14 @@ loop do
       prompt("It's a tie!")
     end
 
+    # method
     if win?(player_choice, computer_choice)
       score['player'] += 1
     elsif win?(computer_choice, player_choice)
       score['computer'] += 1
     end
 
+    # method
     puts ""
     prompt("<Score>")
     score.each { |k, v| prompt("#{k. capitalize}: #{v}") }
@@ -108,12 +120,14 @@ loop do
 
   end
 
+  # method
   if score.key(5) == 'player'
     prompt("You won 5 times! Congratulations! You're the Grand Winnder!!!")
   elsif score.key(5) == 'computer'
     prompt("Computer won 5 times. Game over.")
   end
 
+  # method
   prompt("Do you want to play again?")
   answer = gets.chomp
   break unless answer.downcase.start_with?("y")
