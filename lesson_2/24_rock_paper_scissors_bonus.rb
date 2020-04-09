@@ -18,6 +18,67 @@ def prompt(message)
    puts "=> #{message}"
 end
 
+def instructions
+  puts ""
+  prompt("Welcome to #{VALID_CHOICES.values.join(', ')}!")
+  prompt("Here's how it works:")
+  puts ""
+
+  WIN_CONDITIONS.each { |k, v| prompt("✅ #{k.capitalize} beats #{v[0]} and #{v[1]}") }
+
+  puts ""
+  prompt("Each time you win, you get 1 point.")
+  prompt("First player to 5 points becomes the Grand Winner!")
+  prompt("Now, let's get started...")
+end
+
+def goodbye
+  prompt("Thank you for playing! Goodbye")
+end
+
+def validate_player_choice
+  loop do
+
+    puts ""
+    prompt("Choose one:")
+    puts ""
+    VALID_CHOICES.each { |k, v| prompt("👉 #{v.capitalize} (or #{k})") }
+
+    choice = gets.chomp.downcase
+
+    if VALID_CHOICES.keys.include?(choice)
+      choice = VALID_CHOICES[choice]
+      return choice
+    elsif VALID_CHOICES.values.include?(choice)
+      return choice
+    else
+      puts ""
+      prompt("🚫 That's not a valid choice. Please try again")
+    end
+
+  end
+end
+
+def display_winner(player, computer)
+  prompt("You chose #{player}, the computer chose #{computer}")
+
+  if win?(player, computer)
+    prompt("You win!")
+  elsif win?(computer, player)
+    prompt("Computer wins!")
+  else
+    prompt("It's a tie!")
+  end
+end
+
+def calculate_score(player, computer, score)
+  if win?(player, computer)
+    score['player'] += 1
+  elsif win?(computer, player)
+    score['computer'] += 1
+  end
+end
+
 # TODO: Refactor this to use the WIN_CONDITIONS hash instead of manually doing all of these calculations
 def win?(first, second)
   (first == 'rock' && (second == 'scissors' || second == 'lizard')) ||
@@ -27,33 +88,31 @@ def win?(first, second)
   (first == 'lizard' && (second == 'spock' || second == 'paper'))
 end
 
-# def display_results(player, computer)
-#   if win?(player, computer)
-#     prompt("You win!")
-#   elsif win?(computer, player)
-#     prompt("Computer won!")
-#   else
-#     prompt("It's a tie!")
-#   end
-# end
-
-def instructions
+def display_score(current_score)
   puts ""
-  prompt("Welcome to #{VALID_CHOICES.values.join(', ')}!")
-  prompt("Here's how it works:")
-  puts ""
+  prompt("<Score>")
+  current_score.each { |k, v| prompt("#{k. capitalize}: #{v}") }
+end
 
-  WIN_CONDITIONS.each { |k, v| prompt("👉 #{k.capitalize} beats #{v[0]} and #{v[1]}") }
+def announce_grand_winner(current_score)
+  if current_score.key(5) == 'player'
+    puts ""
+    prompt("You won 5 times! Congratulations! You're the Grand Winnder!!!")
+  elsif current_score.key(5) == 'computer'
+    puts ""
+    prompt("Computer won 5 times. Game over.")
+  end
+end
 
-  puts ""
-  prompt("Each time you win, you get 1 point.")
-  prompt("First player to 5 points becomes the Grand Winner!")
-  prompt("Now, let's get started...")
+def want_to_play_again?
+  prompt("Do you want to play again? (y/n)")
+  answer = gets.chomp.downcase
 end
 
 
+ # ----------- main program -----------
 
- # ----------- main -----------
+
 
 instructions
 
@@ -64,74 +123,26 @@ loop do
   }
 
   loop do
-    player_choice = ''
 
-    loop do
-      # method asking player to make a choice
-      puts ""
-      prompt("Choose one:")
-      puts ""
-
-      # method to get + validate player choice
-      VALID_CHOICES.each { |k, v| prompt("👉 #{v.capitalize} (or #{k})") }
-
-      player_choice = gets.chomp.downcase
-
-      if VALID_CHOICES.keys.include?(player_choice)
-        player_choice = VALID_CHOICES[player_choice]
-        break
-      elsif VALID_CHOICES.values.include?(player_choice)
-        break
-      else
-        puts ""
-        prompt("🚫 That's not a valid choice. Please try again")
-      end
-    end
+    player_choice = validate_player_choice
 
     computer_choice = VALID_CHOICES.values.sample
 
-    prompt("You chose #{player_choice}, the computer chose #{computer_choice}")
+    display_winner(player_choice, computer_choice)
 
-    # method
-    if win?(player_choice, computer_choice)
-      prompt("You win!")
-    elsif win?(computer_choice, player_choice)
-      prompt("Computer wins!")
-    else
-      prompt("It's a tie!")
-    end
+    calculate_score(player_choice, computer_choice, score)
 
-    # method
-    if win?(player_choice, computer_choice)
-      score['player'] += 1
-    elsif win?(computer_choice, player_choice)
-      score['computer'] += 1
-    end
-
-    # method
-    puts ""
-    prompt("<Score>")
-    score.each { |k, v| prompt("#{k. capitalize}: #{v}") }
-
+    display_score(score)
 
     break if score.value?(5)
 
-    # display_results(player_choice, computer_choice)
-
   end
 
-  # method
-  if score.key(5) == 'player'
-    prompt("You won 5 times! Congratulations! You're the Grand Winnder!!!")
-  elsif score.key(5) == 'computer'
-    prompt("Computer won 5 times. Game over.")
-  end
+  announce_grand_winner(score)
 
-  # method
-  prompt("Do you want to play again?")
-  answer = gets.chomp
-  break unless answer.downcase.start_with?("y")
+  play_again = want_to_play_again?
+  break unless play_again.downcase.start_with?("y")
 
 end
 
-prompt("Thank you for playing! Goodbye")
+goodbye
