@@ -7,42 +7,43 @@ VALID_CHOICES = {
 }
 
 WIN_CONDITIONS = {
-  "scissors" => ["paper", "lizard"],
-  "paper" => ["rock", "spock"],
-  "rock" => ["lizard", "scissors"],
-  "lizard" => ["spock", "paper"],
-  "spock" => ["scissors", "rock"]
+  'scissors' => %w[paper lizard],
+  'paper' => %w[rock spock],
+  'rock' => %w[lizard scissors],
+  'lizard' => %w[spock paper],
+  'spock' => %w[scissors rock]
 }
 
 def prompt(message)
-   puts "=> #{message}"
+  puts "=> #{message}"
 end
 
-def instructions
-  puts ""
+def display_game_rules
+  puts ''
   prompt("Welcome to #{VALID_CHOICES.values.join(', ')}!")
-  prompt("Here's how it works:")
-  puts ""
+  prompt('Here\'s how it works:')
+  puts ''
 
-  WIN_CONDITIONS.each { |k, v| prompt("✅ #{k.capitalize} beats #{v[0]} and #{v[1]}") }
+  WIN_CONDITIONS.each do |k, v|
+    prompt("✅ #{k.capitalize} beats #{v[0]} and #{v[1]}")
+  end
 
-  puts ""
-  prompt("Each time you win, you get 1 point.")
-  prompt("First player to 5 points becomes the Grand Winner!")
-  prompt("Now, let's get started...")
+  puts ''
+  prompt('Each time you win, you get 1 point.')
+  prompt('First player to 5 points becomes the Grand Winner!')
+  prompt('Now, let\'s get started...')
 end
 
-def goodbye
-  prompt("Thank you for playing! Goodbye")
+def request_player_choice
+  puts ''
+  prompt('Choose one:')
+  puts ''
+  VALID_CHOICES.each { |k, v| prompt("👉 #{v.capitalize} (or #{k})") }
 end
 
 def validate_player_choice
   loop do
-
-    puts ""
-    prompt("Choose one:")
-    puts ""
-    VALID_CHOICES.each { |k, v| prompt("👉 #{v.capitalize} (or #{k})") }
+    request_player_choice
 
     choice = gets.chomp.downcase
 
@@ -52,10 +53,9 @@ def validate_player_choice
     elsif VALID_CHOICES.values.include?(choice)
       return choice
     else
-      puts ""
-      prompt("🚫 That's not a valid choice. Please try again")
+      puts ''
+      prompt('🚫 That\'s not a valid choice. Please try again')
     end
-
   end
 end
 
@@ -63,11 +63,11 @@ def display_winner(player, computer)
   prompt("You chose #{player}, the computer chose #{computer}")
 
   if win?(player, computer)
-    prompt("You win!")
+    prompt('You win!')
   elsif win?(computer, player)
-    prompt("Computer wins!")
+    prompt('Computer wins!')
   else
-    prompt("It's a tie!")
+    prompt('It\'s a tie!')
   end
 end
 
@@ -79,42 +79,42 @@ def calculate_score(player, computer, score)
   end
 end
 
-# TODO: Refactor this to use the WIN_CONDITIONS hash instead of manually doing all of these calculations
 def win?(first, second)
   (first == 'rock' && (second == 'scissors' || second == 'lizard')) ||
-  (first == 'paper' && (second == 'rock' || second == 'spock')) ||
-  (first == 'scissors' && (second == 'paper' || second == 'lizard')) ||
-  (first == 'spock' && (second == 'scissors' || second == 'rock')) ||
-  (first == 'lizard' && (second == 'spock' || second == 'paper'))
+    (first == 'paper' && (second == 'rock' || second == 'spock')) ||
+    (first == 'scissors' && (second == 'paper' || second == 'lizard')) ||
+    (first == 'spock' && (second == 'scissors' || second == 'rock')) ||
+    (first == 'lizard' && (second == 'spock' || second == 'paper'))
 end
 
 def display_score(current_score)
-  puts ""
-  prompt("<Score>")
+  puts ''
+  prompt('<Score>')
   current_score.each { |k, v| prompt("#{k. capitalize}: #{v}") }
 end
 
 def announce_grand_winner(current_score)
   if current_score.key(5) == 'player'
-    puts ""
-    prompt("You won 5 times! Congratulations! You're the Grand Winnder!!!")
+    puts ''
+    prompt('You won 5 times! Congratulations! You\'re the Grand Winner!!!')
   elsif current_score.key(5) == 'computer'
-    puts ""
-    prompt("Computer won 5 times. Game over.")
+    puts ''
+    prompt('Computer won 5 times. Game over.')
   end
 end
 
 def want_to_play_again?
-  prompt("Do you want to play again? (y/n)")
-  answer = gets.chomp.downcase
+  prompt('Do you want to play again? (y/n)')
+  gets.chomp.downcase
 end
 
+def goodbye
+  prompt('Thank you for playing! Goodbye')
+end
 
- # ----------- main program -----------
+# ----------- main program -----------
 
-
-
-instructions
+display_game_rules
 
 loop do
   score = {
@@ -123,7 +123,6 @@ loop do
   }
 
   loop do
-
     player_choice = validate_player_choice
 
     computer_choice = VALID_CHOICES.values.sample
@@ -135,14 +134,13 @@ loop do
     display_score(score)
 
     break if score.value?(5)
-
   end
 
   announce_grand_winner(score)
 
   play_again = want_to_play_again?
-  break unless play_again.downcase.start_with?("y")
 
+  break unless play_again.downcase.start_with?('y')
 end
 
 goodbye
